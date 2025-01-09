@@ -1,5 +1,8 @@
 import { v1 } from "uuid"
 import { Todolist } from "../api/todolistsApi.types"
+import { Dispatch } from "redux"
+import { RootState } from "../../../app/store"
+import { todolistsApi } from "../api/todolistsApi"
 
 export type FilterValuesType = "all" | "active" | "completed"
 
@@ -77,3 +80,12 @@ type ActionsType =
   | ChangeTodolistTitleActionType
   | ChangeTodolistFilterActionType
   | SetTodolistsActionType
+
+export const fetchTodolistsThunk = (dispatch: Dispatch, getState: () => RootState) => {
+  // внутри санки можно делать побочные эффекты (запросы на сервер)
+  todolistsApi.getTodolists().then(res => {
+    // и диспатчить экшены (action) или другие санки (thunk)
+    dispatch(setTodolistsAC(res.data))
+  })
+}
+

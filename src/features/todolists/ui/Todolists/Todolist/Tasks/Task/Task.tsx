@@ -5,12 +5,14 @@ import ListItem from "@mui/material/ListItem"
 import { ChangeEvent } from "react"
 import { EditableSpan } from "common/components"
 import { useAppDispatch } from "common/hooks/useAppDispatch"
-import { changeTaskStatusAC, changeTaskTitleAC, removeTaskAC, TaskType } from "../../../../../model/tasks-reducer"
+import { changeTaskStatusTC, changeTaskTitleAC, removeTaskTC } from "../../../../../model/tasks-reducer"
 import { TodolistType } from "../../../../../model/todolists-reducer"
 import { getListItemSx } from "./Task.styles"
+import { DomainTask } from "../../../../../api/tasksApi.types"
+import { TaskStatus } from "common/enums"
 
 type Props = {
-  task: TaskType
+  task: DomainTask
   todolist: TodolistType
 }
 
@@ -18,12 +20,12 @@ export const Task = ({ task, todolist }: Props) => {
   const dispatch = useAppDispatch()
 
   const removeTaskHandler = () => {
-    dispatch(removeTaskAC({ taskId: task.id, todolistId: todolist.id }))
+    dispatch(removeTaskTC({ taskId: task.id, todolistId: todolist.id }))
   }
 
   const changeTaskStatusHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    const isDone = e.currentTarget.checked
-    dispatch(changeTaskStatusAC({ taskId: task.id, isDone, todolistId: todolist.id }))
+    let status = e.currentTarget.checked ? TaskStatus.Completed : TaskStatus.New
+    dispatch(changeTaskStatusTC({ taskId: task.id, status, todolistId: todolist.id }))
   }
 
   const changeTaskTitleHandler = (title: string) => {
@@ -31,9 +33,9 @@ export const Task = ({ task, todolist }: Props) => {
   }
 
   return (
-    <ListItem key={task.id} sx={getListItemSx(task.isDone)}>
+    <ListItem key={task.id} sx={getListItemSx(task.status === TaskStatus.Completed)}>
       <div>
-        <Checkbox checked={task.isDone} onChange={changeTaskStatusHandler} />
+        <Checkbox checked={task.status === TaskStatus.Completed} onChange={changeTaskStatusHandler} />
         <EditableSpan value={task.title} onChange={changeTaskTitleHandler} />
       </div>
       <IconButton onClick={removeTaskHandler}>
