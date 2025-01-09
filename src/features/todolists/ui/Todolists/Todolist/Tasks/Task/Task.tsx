@@ -5,7 +5,7 @@ import ListItem from "@mui/material/ListItem"
 import { ChangeEvent } from "react"
 import { EditableSpan } from "common/components"
 import { useAppDispatch } from "common/hooks/useAppDispatch"
-import { changeTaskStatusTC, changeTaskTitleAC, removeTaskTC } from "../../../../../model/tasks-reducer"
+import { updateTaskTC, removeTaskTC } from "../../../../../model/tasks-reducer"
 import { TodolistType } from "../../../../../model/todolists-reducer"
 import { getListItemSx } from "./Task.styles"
 import { DomainTask } from "../../../../../api/tasksApi.types"
@@ -25,11 +25,11 @@ export const Task = ({ task, todolist }: Props) => {
 
   const changeTaskStatusHandler = (e: ChangeEvent<HTMLInputElement>) => {
     let status = e.currentTarget.checked ? TaskStatus.Completed : TaskStatus.New
-    dispatch(changeTaskStatusTC({ taskId: task.id, status, todolistId: todolist.id }))
+    dispatch(updateTaskTC({ taskId: task.id, domainModel: {status}, todolistId: todolist.id }))
   }
 
   const changeTaskTitleHandler = (title: string) => {
-    dispatch(changeTaskTitleAC({ taskId: task.id, title, todolistId: todolist.id }))
+    dispatch(updateTaskTC({ taskId: task.id, domainModel: {title}, todolistId: todolist.id }))
   }
 
   return (
